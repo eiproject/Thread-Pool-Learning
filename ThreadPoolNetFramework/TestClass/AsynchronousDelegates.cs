@@ -4,16 +4,20 @@ using System.Text;
 
 namespace ThreadPoolNetFramework.TestClass {
   class AsynchronousDelegates {
+    private Func<string, string, int> _delegateMethod;
+    private IAsyncResult _invoked;
     internal AsynchronousDelegates() {
-      Func<string, int> method = Work;
-      IAsyncResult cookie = method.BeginInvoke("test", null, null);
-      //
-      // ... here's where we can do other work in parallel...
-      //
-      int result = method.EndInvoke(cookie);
+      _delegateMethod = Work;
+      _invoked = _delegateMethod.BeginInvoke("great", "good", null, null);
+      
+      // _invoked = _delegateMethod.BeginInvoke("bad", "worse", null, null);
+
+      int result = _delegateMethod.EndInvoke(_invoked);
       Console.WriteLine("String length is: " + result);
     }
 
-    static int Work(string s) { return s.Length; }
+    private int Work(string s, string t) {
+      return s.Length + t.Length;
+    }
   }
 }
